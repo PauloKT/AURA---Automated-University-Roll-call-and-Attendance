@@ -34,6 +34,20 @@ function harness(fetch) {
 }
 const response = (data = {}, status = 200) => ({ ok: status < 400, status, json: async () => data });
 
+for (const [description, data, expected] of [
+  ['erro geral de login', { non_field_errors: ['Impossível fazer login com as credenciais fornecidas.'] }, 'Impossível fazer login com as credenciais fornecidas.'],
+  ['erro de usuário', { username: ['Informe seu usuário ou e-mail.'] }, 'Informe seu usuário ou e-mail.'],
+  ['erro de senha', { password: ['Informe sua senha.'] }, 'Informe sua senha.'],
+  ['detalhe sem código técnico', { detail: 'Acesso negado.', code: 'permission_denied' }, 'Acesso negado.'],
+  ['erro aninhado', { non_field_errors: { credentials: ['Credenciais inválidas.'] } }, 'Credenciais inválidas.'],
+  ['campo com rótulo legível', { nome: ['Este campo é obrigatório.'] }, 'Nome: Este campo é obrigatório.'],
+]) {
+  test(`mensagem legível para ${description}`, async () => {
+    const ui = harness(async () => response(data, 400));
+    await assert.rejects(ui.api.json('/api/auth/login/', { method: 'POST' }), error => error.message === expected);
+  });
+}
+
 test('envia cookie e CSRF atuais sem ler ou enviar JWT do armazenamento local', async () => {
   const ui = harness(async (url, options) => {
     assert.equal(options.credentials, 'same-origin');

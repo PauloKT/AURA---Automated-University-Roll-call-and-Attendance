@@ -1,8 +1,24 @@
+# Dependencias Python do AURA (Django + SQLite).
+# Instalar na raiz: .\.venv\Scripts\python.exe -m pip install -r requirements.txt
+
+# Backend, API e autenticacao
 Django>=5.2.17,<5.3
 djangorestframework>=3.17,<4.0
 djangorestframework-simplejwt>=5.5,<6.0
+Pillow>=11.3,<13.0
 django-cors-headers>=4.9,<5.0
+
+# Configuracao, geocodificacao e documentacao da API
 python-dotenv>=1.0,<2.0
 requests>=2.34,<3.0
 drf-spectacular>=0.27,<1.0
+
+# QR Code gerado em SVG (dispensa Pillow)
 qrcode>=8.2,<9.0
+
+# Cloudflare Tunnel: dependencia externa necessaria ao fluxo de execucao do AURA.
+# O executavel oficial cloudflared deve ser instalado fora do pip:
+#   winget install --id Cloudflare.cloudflared --exact
+# Conferir: cloudflared --version
+# O pacote Python cloudflare e um cliente da API e nao instala o tunel.
+# Consulte README.md para iniciar o tunel e configurar o .env.

@@ -1,9 +1,10 @@
 {% extends 'auth_base.html' %}{% load static %}
 {% block title %}Criar conta · AURA{% endblock %}
-{% block auth_content %}<h2>Seu espaço na sala de aula.</h2><p>Crie sua conta. Os campos com * são obrigatórios.</p><div id="error-message" class="error" role="alert"></div><div id="success-message" class="success" role="status"></div><form id="register-form"><div class="form-grid">
+{% block auth_content %}<h2 id="registration-title">Seu espaço na sala de aula.</h2><p id="registration-intro">Crie sua conta. Os campos com * são obrigatórios.</p><div id="error-message" class="error" role="alert"></div><div id="success-message" class="success" role="status"></div>
+<form id="register-form"><div class="form-grid">
 <div class="field full"><label for="role">Como você vai usar o AURA? *</label><select id="role" name="role"><option value="aluno">Sou aluno</option><option value="professor">Sou professor</option></select></div>
-<div class="field full"><label for="username">Nome de usuário *</label><input id="username" name="username" required autocomplete="username" maxlength="150"></div>
-<div class="field full"><label for="email">E-mail *</label><input id="email" name="email" type="email" autocomplete="email" required aria-describedby="email-help"><small id="email-help">Use um e-mail válido, pessoal ou institucional.</small></div>
+<div class="field full"><label for="username">Nome de usuário *</label><input id="username" name="username" autocapitalize="none" spellcheck="false" required autocomplete="username" maxlength="150" placeholder="Escolha seu nome de usuário" aria-describedby="username-help"><small id="username-help">Pode usar espaços para colocar dois ou mais nomes. Você também poderá entrar pelo e-mail.</small></div>
+<div class="field full"><label for="email">E-mail *</label><input id="email" name="email" type="email" autocapitalize="none" spellcheck="false" autocomplete="email" required aria-describedby="email-help"><small id="email-help">Use um e-mail válido, pessoal ou institucional.</small></div>
 <div class="field"><label for="password">Senha *</label><input id="password" name="password" type="password" autocomplete="new-password" required minlength="5" aria-describedby="password-help"></div><div class="field"><label for="password2">Confirmar senha *</label><input id="password2" name="password2" type="password" autocomplete="new-password" required></div>
 <small class="field full" id="password-help">Pelo menos 5 caracteres, uma letra maiúscula, um número e um símbolo.</small>
 <div class="field full" id="matricula-group"><label for="matricula">Matrícula *</label><input id="matricula" name="matricula" maxlength="20"></div>
@@ -25,4 +26,4 @@
     </div>
   </fieldset>
 </div></div><button type="submit">Criar minha conta</button></form><p class="auth-switch">Já tem uma conta? <a href="/login.html">Entrar</a></p>{% endblock %}
-{% block scripts %}<script src="{% static 'register.js' %}"></script>{% endblock %}
+{% block scripts %}<script src="{% static 'register.js' %}?v=aura-login-2"></script>{% endblock %}

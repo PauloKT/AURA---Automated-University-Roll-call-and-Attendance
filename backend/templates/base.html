@@ -1,21 +1,23 @@
 {% load static %}<!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="referrer" content="no-referrer">
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="referrer" content="same-origin">
   <meta name="csrf-token" content="{{ csrf_token }}">
-  <meta name="theme-color" content="#183b56">
+  <meta name="theme-color" content="#153e56">
   <title>{% block title %}AURA · Chamada acadêmica{% endblock %}</title>
-  <link rel="icon" href="{% static 'brand.svg' %}" type="image/svg+xml">
-  <link rel="stylesheet" href="{% static 'app.css' %}">
+  <link rel="icon" href="{% static 'brand.png' %}?v=aura-geofence-3" type="image/png">
+  <link rel="preload" href="{% static 'fonts/manrope-latin-variable.woff2' %}" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="{% static 'app.css' %}?v=aura-navigation-2">
   {% block styles %}{% endblock %}
 </head>
-<body data-role="{{ area|default:'' }}" class="{% block body_class %}{% endblock %}">
+<body data-role="{{ area|default:'' }}" data-icons-url="{% static 'icons.svg' %}?v=aura-icons-1" class="{% block body_class %}{% endblock %}">
   <a class="skip-link" href="#main">Ir para o conteúdo</a>
   {% block layout %}{% endblock %}
   <div id="toast-region" class="toast-region" role="status" aria-live="polite"></div>
-  <script src="{% static 'api.js' %}"></script>
-  <script src="{% static 'ui.js' %}"></script>
+  <script src="{% static 'api.js' %}?v=aura-login-2"></script>
+  <script src="{% static 'profile.js' %}?v=aura-photo-crop-1"></script>
+  <script src="{% static 'ui.js' %}?v=aura-navigation-1"></script>
   {% block scripts %}{% endblock %}
 </body>
 </html>

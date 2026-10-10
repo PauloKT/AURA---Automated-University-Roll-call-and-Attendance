@@ -103,9 +103,13 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR.parent / 'frontend']
+MEDIA_ROOT = BASE_DIR / 'media'
+# Fotos são entregues pelo endpoint autenticado do próprio perfil.
+MEDIA_URL = '/media/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'accounts.CustomUser'
+AUTHENTICATION_BACKENDS = ['accounts.backends.UsernameOrEmailBackend']
 
 # Navegador: sessão revogável no servidor, com prazo de um dia desde o login.
 SESSION_COOKIE_HTTPONLY = True

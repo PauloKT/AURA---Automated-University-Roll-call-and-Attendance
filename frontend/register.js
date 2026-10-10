@@ -131,7 +131,8 @@ document.addEventListener('DOMContentLoaded', function() {
         ? 'Conta e instituição cadastradas! Faça login. Para iniciar chamadas nesse campus, peça ao administrador que confirme a localização da instituição.'
         : 'Cadastro realizado com sucesso! Faça login.');
       if (!adding) {
-        setTimeout(() => { window.location.href = 'login.html'; }, 2000);
+        const next = new URLSearchParams(location.search).get('next');
+        setTimeout(() => { window.location.href = '/login.html' + (next ? '?next=' + encodeURIComponent(next) : ''); }, 2000);
       } else {
         form.hidden = true;
       }

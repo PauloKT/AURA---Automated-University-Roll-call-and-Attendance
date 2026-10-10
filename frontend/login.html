@@ -1,4 +1,13 @@
 {% extends 'auth_base.html' %}{% load static %}
 {% block title %}Entrar · AURA{% endblock %}
-{% block auth_content %}<h2>Bom ter você por aqui.</h2><p>Entre para acompanhar suas aulas.</p><div id="error-message" class="error" role="alert"></div><form id="login-form"><div class="field"><label for="username">Usuário *</label><input id="username" name="username" autocomplete="username" required placeholder="Seu nome de usuário"></div><div class="field"><label for="password">Senha *</label><input id="password" name="password" type="password" autocomplete="current-password" required placeholder="Digite sua senha"></div><button type="submit">Entrar na minha conta</button></form><p class="auth-switch">Seu primeiro acesso? <a href="/register.html">Criar conta</a></p>{% endblock %}
-{% block scripts %}<script src="{% static 'login.js' %}"></script>{% endblock %}
+{% block auth_content %}
+<h2>Bom ter você por aqui.</h2><p>Entre para acompanhar suas aulas.</p>
+<div id="error-message" class="error" role="alert"></div>
+<form id="login-form">
+  <div class="field"><label for="username">Usuário ou e-mail *</label><input id="username" name="username" autocomplete="username" required placeholder="Digite seu usuário ou e-mail" autocapitalize="none" spellcheck="false"></div>
+  <div class="field"><label for="password">Senha *</label><input id="password" name="password" type="password" autocomplete="current-password" required placeholder="Digite sua senha"></div>
+  <button type="submit">Entrar na minha conta</button>
+</form>
+<p class="auth-switch">Seu primeiro acesso? <a href="/register.html{% if request.GET.next %}?next={{ request.GET.next|urlencode }}{% endif %}">Criar conta</a></p>
+{% endblock %}
+{% block scripts %}<script src="{% static 'login.js' %}?v=aura-profiles-1"></script>{% endblock %}

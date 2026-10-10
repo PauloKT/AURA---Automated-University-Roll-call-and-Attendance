@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.db import IntegrityError
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, permissions, serializers, status
@@ -21,7 +22,10 @@ class RegisterView(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = serializer.save()
+        try:
+            user = serializer.save()
+        except IntegrityError:
+            raise serializers.ValidationError({'detail': 'Usuário ou e-mail já cadastrado. Entre na sua conta.'})
         return Response({
             'user': {'id': user.id, 'username': user.username, 'email': user.email, 'role': user.role},
             'message': 'Usuário criado com sucesso.',

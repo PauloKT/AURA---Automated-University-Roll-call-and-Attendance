@@ -1,12 +1,12 @@
 ﻿# Testar chamada pelo celular
 
-Revisado em **01/10/2026**. Professor e aluno devem usar o mesmo endereço HTTPS. No teste local, o banco continua no computador que executa Django.
+Revisado em **06/10/2026**. Professor e aluno devem usar o mesmo endereço HTTPS. No teste local, o banco continua no computador que executa Django.
 
 ## Preparar o computador ou notebook
 
-1. Em uma máquina nova, crie um ambiente virtual e instale `requirements.txt`, seguindo o README. Não copie `.venv` da outra máquina.
-2. Configure `.env` com `DEBUG=True`. No diretório `backend`, execute `python manage.py prepare_local`: backup do SQLite existente e aplicação de migrations. Isso deve ser conferido em cada instalação.
-3. Inicie `python manage.py runserver 127.0.0.1:8000`.
+1. Em uma máquina nova, crie um ambiente virtual e instale `requirements.txt` e o executável `cloudflared`, seguindo o [README](../README.md). O fluxo do projeto usa sempre [Django e Cloudflare juntos](../README.md#rodar-o-projeto-com-django-e-cloudflare); o executável do túnel não é instalado pelo `pip`. Não copie `.venv` da outra máquina.
+2. Configure `.env` com `DEBUG=True`. Na raiz do projeto, execute `.\.venv\Scripts\python.exe backend/manage.py prepare_local`: backup do SQLite existente e aplicação de migrations. Isso deve ser conferido em cada instalação.
+3. Ainda na raiz, inicie `.\.venv\Scripts\python.exe backend/manage.py runserver 127.0.0.1:8000`. Se já estiver na pasta `backend` com a `.venv` ativada, use `python manage.py runserver 127.0.0.1:8000`. O Python faz parte do comando; não execute apenas `manage.py`.
 4. Em outro terminal, execute o túnel:
 
 ```powershell
@@ -21,7 +21,7 @@ Se não estiver no PATH, use o local em que foi instalado. Exemplo:
 
 O argumento é somente a URL: não copie colchetes nem sintaxe de link Markdown. Se o serviço responder com erro 409, tente novamente mais tarde; esse erro de provisionamento ocorre antes de o túnel alcançar o Django.
 
-5. Adicione o hostname retornado (sem `https://`) a `ALLOWED_HOSTS` e a URL HTTPS completa a `CSRF_TRUSTED_ORIGINS`. Defina `SESSION_COOKIE_SECURE=True` e `CSRF_COOKIE_SECURE=True`. Reinicie o Django. Essas opções são necessárias também para login e formulários do sistema. Para voltar ao HTTP local, use `False` nas duas opções de cookie.
+5. Adicione o hostname retornado (sem `https://`) a `ALLOWED_HOSTS` e a URL HTTPS completa a `CSRF_TRUSTED_ORIGINS`. Mantenha `SESSION_COOKIE_SECURE=True` e `CSRF_COOKIE_SECURE=True`. Reinicie o Django. Essas opções são necessárias também para login e formulários do sistema. Quando iniciar outro túnel, atualize os endereços no `.env` e reinicie o Django novamente.
 6. Abra o endereço HTTPS no computador e no celular; mantenha servidor e túnel ligados. A rede da faculdade precisa permitir acesso ao domínio. O celular pode usar outra rede com internet.
 7. Encerre servidor e túnel após o ensaio: o túnel torna o servidor de desenvolvimento acessível pela internet.
 

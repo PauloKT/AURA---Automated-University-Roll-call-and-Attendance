@@ -1,1 +1,39 @@
-<section data-panel="perfil" hidden><header class="page-heading"><div><h1>Meu perfil</h1><p>Informações da sua conta acadêmica.</p></div></header><div class="panel narrow"><dl id="profile-details" class="detail-list"><dt>Conta</dt><dd>Carregando…</dd></dl></div></section>
+<section data-panel="perfil" hidden>
+  <header class="page-heading"><div><h1>Meu perfil</h1><p>Sua foto e seus dados acadêmicos.</p></div></header>
+  <div class="panel narrow">
+    <form id="profile-form" hidden>
+      <div class="profile-photo-row">
+        <span class="avatar profile-avatar" id="profile-avatar" role="img" aria-label="Foto de perfil">A</span>
+        <div class="profile-photo-controls">
+          <label for="profile-photo">Foto de perfil</label>
+          <input id="profile-photo" name="foto" type="file" accept="image/jpeg,image/png,image/webp" aria-describedby="profile-photo-help">
+          <small id="profile-photo-help">JPG, PNG ou WebP, até 5 MB. A foto aparece na sua conta.</small>
+          <div class="actions">
+            <button type="button" id="profile-photo-adjust" class="button secondary small" aria-expanded="false" aria-controls="profile-crop-editor" hidden>Ajustar enquadramento</button>
+            <button type="button" id="profile-photo-remove" class="text-button danger" hidden>Remover foto atual</button>
+          </div>
+        </div>
+      </div>
+      <fieldset id="profile-crop-editor" class="profile-crop-editor" hidden>
+        <legend>Ajustar enquadramento</legend>
+        <div class="profile-crop-layout">
+          <div id="profile-crop-stage" class="avatar profile-crop-stage" tabindex="0" role="group" aria-label="Posição da foto" aria-describedby="profile-crop-help"></div>
+          <div class="profile-crop-controls">
+            <p id="profile-crop-help">Arraste a foto para centralizar o rosto. No teclado, use as setas com a foto selecionada.</p>
+            <div class="field">
+              <label for="profile-photo-zoom">Zoom <output id="profile-zoom-value" for="profile-photo-zoom">100%</output></label>
+              <input id="profile-photo-zoom" type="range" min="1" max="3" step="0.01" value="1">
+            </div>
+            <button type="button" id="profile-crop-reset" class="button secondary small">Redefinir enquadramento</button>
+            <small>Confira a prévia e clique em Salvar alterações para aplicar.</small>
+          </div>
+        </div>
+      </fieldset>
+      <div class="field"><label for="profile-name">Nome exibido</label><input id="profile-name" name="nome" autocomplete="name" required maxlength="150"><small>O seu usuário de login continua o mesmo.</small></div>
+      <div class="actions"><button type="submit">Salvar alterações</button><button type="button" id="profile-cancel" class="button secondary">Cancelar</button></div>
+      <p id="profile-feedback" class="profile-feedback" role="status" aria-live="polite"></p>
+    </form>
+    <hr class="panel-divider">
+    <dl id="profile-details" class="detail-list"><dt>Conta</dt><dd>Carregando…</dd></dl>
+  </div>
+</section>

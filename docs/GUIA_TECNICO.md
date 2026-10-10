@@ -4,7 +4,7 @@ Referência da implementação em **01/10/2026**.
 
 ## 1. Arquitetura
 
-Django 5.2 LTS e DRF no backend; templates Django, HTML/CSS/JavaScript puro no frontend. Sem React, Bootstrap, Celery ou biometria. SQLite é o banco local do projeto; o Cloudflare Tunnel fornece HTTPS temporário para os testes em celular.
+Django 5.2 LTS e DRF no backend; templates Django, HTML/CSS/JavaScript puro no frontend. Sem React, Bootstrap, Celery ou biometria. SQLite é o banco local do projeto. O fluxo de execução usa sempre Django e Cloudflare Tunnel juntos, com acesso pelo endereço HTTPS do túnel no computador e no celular.
 
 - `backend/backend/settings.py`: ambiente, SQLite, JWT e CORS.
 - `backend/backend/urls.py`: páginas explícitas (inclusive com `DEBUG=False`), APIs e OpenAPI.
@@ -15,7 +15,7 @@ Django 5.2 LTS e DRF no backend; templates Django, HTML/CSS/JavaScript puro no f
 - `backend/templates/`: bases e includes compartilhados.
 - `frontend/`: cinco páginas, `app.css`, marca, componentes e scripts.
 
-O projeto é executado localmente com `python manage.py runserver`. Não há armazenamento de uploads implementado no fluxo atual.
+Dentro de `backend`, com a `.venv` ativada, inicie o Django com `python manage.py runserver 127.0.0.1:8000`. Em outro terminal, execute `cloudflared tunnel --url http://127.0.0.1:8000`. A configuração da URL e os comandos completos estão no [README](../README.md#rodar-o-projeto-com-django-e-cloudflare). Não há armazenamento de uploads implementado no fluxo atual.
 
 ## 2. Autenticação e permissões
 

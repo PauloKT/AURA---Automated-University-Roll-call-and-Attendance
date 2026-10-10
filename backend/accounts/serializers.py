@@ -38,8 +38,22 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         model = User
         fields = ('username', 'email', 'role', 'matricula', 'instituicao', 'instituicoes', 'nova_instituicao', 'password', 'password2')
         extra_kwargs = {
-            'email': {'required': True},
+            'email': {'required': True, 'allow_blank': False},
         }
+
+    def validate_username(self, value):
+        value = value.strip()
+        if not value:
+            raise serializers.ValidationError('Informe um nome de usuário.')
+        if User.objects.filter(email__iexact=value).exists():
+            raise serializers.ValidationError('Este nome de usuário já está em uso.')
+        return value
+
+    def validate_email(self, value):
+        value = value.strip().lower()
+        if User.objects.filter(email__iexact=value).exists() or User.objects.filter(username__iexact=value).exists():
+            raise serializers.ValidationError('Este e-mail já está em uso. Entre na sua conta.')
+        return value
 
     def validate_password(self, value):
         errors = []
@@ -58,7 +72,9 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         if attrs['password'] != attrs['password2']:
             raise serializers.ValidationError({"password": "As senhas não coincidem."})
+        return self.validate_academic(attrs)
 
+    def validate_academic(self, attrs):
         if attrs.get('role') == 'aluno' and not attrs.get('matricula'):
             raise serializers.ValidationError({"matricula": "Matrícula é obrigatória para alunos."})
 

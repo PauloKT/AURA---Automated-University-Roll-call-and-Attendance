@@ -1,8 +1,30 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.models.functions import Lower
+from django.core.validators import MinValueValidator, MaxValueValidator
+from uuid import uuid4
+
+from .validators import SpacedUsernameValidator
+
+
+def avatar_upload_to(instance, filename):
+    return f'avatars/{instance.pk}/{uuid4().hex}.webp'
 
 
 class CustomUser(AbstractUser):
+    username_validator = SpacedUsernameValidator()
+    username = models.CharField(
+        'usuário', max_length=150, unique=True, validators=[username_validator],
+        help_text='Até 150 caracteres. Letras, números, espaços e @ . + - _.',
+        error_messages={'unique': 'Este nome de usuário já está em uso.'},
+    )
+    foto = models.FileField(upload_to=avatar_upload_to, blank=True)
+    foto_posicao_x = models.FloatField(default=50, validators=[MinValueValidator(0), MaxValueValidator(100)])
+    foto_posicao_y = models.FloatField(default=50, validators=[MinValueValidator(0), MaxValueValidator(100)])
+    foto_zoom = models.FloatField(default=1, validators=[MinValueValidator(1), MaxValueValidator(3)])
+    # Metadados legados preservados; não há mais autenticação pelo Google.
+    google_sub = models.CharField(max_length=255, unique=True, null=True, blank=True, editable=False)
+    google_email = models.EmailField(blank=True, editable=False)
     ROLE_CHOICES = (
         ('professor', 'Professor'),
         ('aluno', 'Aluno'),
@@ -33,6 +55,9 @@ class CustomUser(AbstractUser):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
+        constraints = [
+            models.UniqueConstraint(Lower('email'), condition=~models.Q(email=''), name='accounts_email_ci_unique'),
+        ]
         indexes = [
             models.Index(fields=['role'], name='idx_customuser_role'),
             models.Index(fields=['cep'], name='idx_customuser_cep'),

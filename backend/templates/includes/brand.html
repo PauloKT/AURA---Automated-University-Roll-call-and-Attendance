@@ -1,4 +1,4 @@
-<a class="brand" href="{% if area == 'professor' %}/professor.html{% elif area == 'aluno' %}/aluno.html{% else %}/login.html{% endif %}" aria-label="AURA — página inicial">
-  <span class="brand-mark" aria-hidden="true">a</span>
+{% load static %}<a class="brand" href="{% if area == 'professor' %}/professor.html{% elif area == 'aluno' %}/aluno.html{% else %}/login.html{% endif %}" aria-label="AURA — página inicial">
+  <img class="brand-mark" src="{% static 'brand.png' %}?v=aura-geofence-3" width="48" height="48" alt="" aria-hidden="true" decoding="async">
   <span class="brand-copy"><span class="brand-name">AURA</span><small>Chamada acadêmica</small></span>
 </a>

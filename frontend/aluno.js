@@ -18,25 +18,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const { turmas } = await Aura.json('/api/aluno/turmas/');
     list.replaceChildren();
     if (!turmas.length) {
-      list.textContent = 'Você ainda não está matriculado em nenhuma turma. Use “Entrar em uma turma” com o código do professor.';
+      list.innerHTML = UI.empty('Sua primeira turma começa aqui', 'Peça o código ao professor para acompanhar as aulas e sua frequência.', '<a class="button" href="#entrar">Entrar em uma turma</a>');
     }
     for (const turma of turmas) {
       const card = document.createElement('div');
       card.className = 'turma-card';
-      const title = document.createElement('h3');
-      title.textContent = turma.nome;
-      const subject = document.createElement('p');
-      subject.textContent = `${turma.materia.nome} — ${turma.semestre}/${turma.ano}`;
-      const frequency = document.createElement('p');
-      const labels = { aprovado: 'Regular', reprovado: 'Atenção' };
-      const label = labels[turma.situacao];
-      frequency.className = 'frequencia-value ' + (label ? turma.situacao : 'sem_dados');
-      frequency.textContent = label ? `Frequência: ${turma.percentual}% (${label})` : 'Frequência: sem dados';
-      card.append(title, subject, frequency);
-      const details = document.createElement('p');
-      details.className = 'muted';
-      details.textContent = `Professor: ${turma.professor || 'Não informado'} · ${turma.presencas ?? 0} presenças · ${turma.faltas ?? 0} faltas`;
-      card.appendChild(details);
+      const e = UI.escape;
+      const hasFrequency = ['aprovado', 'reprovado'].includes(turma.situacao);
+      card.innerHTML = `<span class="course-code">${e(turma.materia.nome)}</span>
+        <h3>${e(turma.nome)}</h3>
+        <p class="muted">${e(turma.semestre)} / ${e(turma.ano)}<br>Professor: ${e(turma.professor || 'Não informado')}</p>
+        <div class="student-card-frequency"><div><small>Sua frequência</small><strong>${hasFrequency ? UI.percent(turma.percentual) : 'Sem dados'}</strong></div>${UI.badge(hasFrequency ? turma.situacao : 'sem_dados')}</div>
+        <progress max="100" value="${hasFrequency ? Number(turma.percentual) || 0 : 0}" aria-label="Frequência em ${e(turma.materia.nome)}"></progress>
+        <div class="card-meta"><span>${e(turma.presencas ?? 0)} presenças</span><span>${e(turma.faltas ?? 0)} faltas</span></div>`;
       list.appendChild(card);
     }
   }
@@ -61,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         previousCalls = signature;
       }
-      callsStatus.textContent = chamadas.length ? 'Há chamada aguardando sua presença.' : 'Nenhuma chamada pendente. Os avisos são atualizados automaticamente.';
+      callsStatus.textContent = chamadas.length ? 'Há chamada aguardando sua presença.' : 'Nenhuma chamada aberta agora. Os avisos são atualizados automaticamente.';
     } catch (error) {
       callsStatus.textContent = 'Não foi possível atualizar os avisos. Tentaremos novamente.';
     } finally {

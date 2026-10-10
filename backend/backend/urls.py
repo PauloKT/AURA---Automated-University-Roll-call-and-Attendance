@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
-from .ui_api import WorkspaceView, ProfileView
+from .ui_api import WorkspaceView
+from accounts.profile import ProfileView, ProfilePhotoView
 from drf_spectacular.views import (
     SpectacularAPIView,
     SpectacularRedocView,
@@ -17,6 +18,7 @@ urlpatterns = [
     path('confirmar-presenca.html', TemplateView.as_view(template_name='confirmar-presenca.html', extra_context={'area': 'aluno'}), name='presence-page'),
     path('api/interface/painel/', WorkspaceView.as_view(), name='workspace-data'),
     path('api/interface/perfil/', ProfileView.as_view(), name='profile-data'),
+    path('api/interface/perfil/foto/', ProfilePhotoView.as_view(), name='profile-photo'),
     path('admin/', admin.site.urls),
     path('api/', include('accounts.urls')),
     path('api/', include('courses.urls')),

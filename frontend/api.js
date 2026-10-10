@@ -39,7 +39,17 @@ window.Aura = (() => {
     const data = await response.json().catch(() => ({}));
     if (!response.ok) {
       const labels = { nome: 'Nome', codigo: 'Código', carga_horaria: 'Carga horária', frequencia_minima: 'Frequência mínima', materia: 'Matéria', turma: 'Turma', hora_inicio: 'Início', hora_fim: 'Fim', data: 'Data', titulo: 'Título' };
-      const message = data.detail || Object.entries(data).map(([field, errors]) => `${labels[field] || field}: ${Array.isArray(errors) ? errors.join(' ') : errors}`).join('\n');
+      const messages = value => {
+        if (typeof value === 'string') return [value];
+        if (value && typeof value === 'object') return Object.values(value).flatMap(messages);
+        return [];
+      };
+      const detail = messages(data?.detail || data?.erro).join(' ');
+      const message = detail || (typeof data === 'string' ? data : Object.entries(data || {}).map(([field, errors]) => {
+        const reason = messages(errors).join(' ');
+        if (!reason) return '';
+        return labels[field] ? `${labels[field]}: ${reason}` : reason;
+      }).filter(Boolean).join('\n'));
       throw new Error(message || 'Não foi possível concluir. Tente novamente.');
     }
     return data;

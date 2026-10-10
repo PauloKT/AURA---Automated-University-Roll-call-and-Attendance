@@ -1,1 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="18" fill="#183b56"/><path d="M44 46V27a12 12 0 1 0-5 10M23 46h21" fill="none" stroke="#aee4d7" stroke-width="7" stroke-linecap="round"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" color="#153e56" role="img" aria-labelledby="brand-title">
+  <title id="brand-title">AURA — chamada acadêmica</title>
+  <g id="aura-mark">
+    <path d="m12 57 17-31a3.5 3.5 0 0 1 6 0l17 31H41L32 39 23 57Z" fill="currentColor"/>
+    <path d="m25 46 5 5 10-11" fill="none" stroke="#32d4a6" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M21 17v7c6 4 16 4 22 0v-7" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/>
+    <path d="m10 13 22-9 22 9-22 9Z" fill="#32d4a6"/>
+    <path d="M53 14v13" fill="none" stroke="#32d4a6" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="53" cy="29" r="3" fill="#32d4a6"/>
+  </g>
+</svg>

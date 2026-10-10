@@ -12,19 +12,6 @@ from attendance.models import Presenca, SessaoChamada
 from courses.models import Aula, Materia, Turma, TurmaAluno
 
 
-class ProfileView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        user = request.user
-        return Response({
-            'id': user.pk, 'username': user.username,
-            'nome': user.get_full_name() or user.username,
-            'email': user.email, 'role': user.role, 'matricula': user.matricula,
-            'instituicoes': list(user.instituicoes.values_list('nome', flat=True)),
-        })
-
-
 class WorkspaceView(APIView):
     permission_classes = [IsAuthenticated]
 

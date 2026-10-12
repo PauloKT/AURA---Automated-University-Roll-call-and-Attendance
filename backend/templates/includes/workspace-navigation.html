@@ -1,0 +1,17 @@
+<nav class="workspace-navigation" aria-label="Páginas do AURA">
+  <div class="workspace-navigation-inner">
+    {% if area == 'professor' %}
+    <a href="/professor.html#inicio" data-nav="inicio">{% include 'includes/icon.html' with name='overview' %}<span>Início</span></a>
+    <a href="/professor.html#materias" data-nav="materias">{% include 'includes/icon.html' with name='book' %}<span>Matérias</span></a>
+    <a href="/professor.html#turmas" data-nav="turmas">{% include 'includes/icon.html' with name='users' %}<span>Turmas</span></a>
+    <a href="/professor.html#chamada" data-nav="chamada">{% include 'includes/icon.html' with name='qr' %}<span>Chamada</span></a>
+    <a href="/professor.html#relatorios" data-nav="relatorios">{% include 'includes/icon.html' with name='chart' %}<span>Relatórios</span></a>
+    {% else %}
+    <a href="/aluno.html#inicio" data-nav="inicio">{% include 'includes/icon.html' with name='overview' %}<span>Início</span></a>
+    <a href="/aluno.html#turmas" data-nav="turmas">{% include 'includes/icon.html' with name='users' %}<span>Turmas</span></a>
+    <a href="/aluno.html#frequencia" data-nav="frequencia">{% include 'includes/icon.html' with name='chart' %}<span>Frequência</span></a>
+    <a href="/aluno.html#entrar" data-nav="entrar">{% include 'includes/icon.html' with name='join' %}<span>Entrar na turma</span></a>
+    {% endif %}
+    <button type="button" id="logout-btn" class="workspace-logout" data-logout>{% include 'includes/icon.html' with name='logout' %}<span>Sair da conta</span></button>
+  </div>
+</nav>

@@ -1,0 +1,16 @@
+{% extends 'app_base.html' %}{% load static %}
+{% block title %}Registrar presença · AURA{% endblock %}
+{% block content %}<section class="panel confirmation">
+  <div class="confirmation-location">{% include 'includes/geo-signal.html' %}</div>
+  <h1>Vamos registrar sua presença.</h1>
+  <p id="lesson-info" class="muted"></p>
+  <p class="location-context">Sua localização será comparada ao raio de presença do campus.</p>
+  <p id="flow-status" role="status">Preparando confirmação…</p>
+  <div id="error-message" class="error" role="alert"></div>
+  <div id="success-message" class="success" role="status"></div>
+  <p class="muted">Mantenha esta página aberta e permita o acesso à localização quando solicitado.</p>
+  <button class="button" id="confirm-btn" hidden disabled>Tentar novamente</button>
+  <hr class="panel-divider">
+  <a class="back-link" id="back-link" href="/aluno.html">{% include 'includes/icon.html' with name='arrow-left' %}Voltar para minhas turmas</a>
+</section>{% endblock %}
+{% block scripts %}<script src="{% static 'confirmar-presenca.js' %}"></script>{% endblock %}

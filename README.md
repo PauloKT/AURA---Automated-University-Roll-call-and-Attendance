@@ -1,6 +1,6 @@
 # AURA — Controle Automatizado de Chamada Universitária
 
-Sistema acadêmico desenvolvido como TCC para gerenciar turmas e registrar presença com **QR Code rotativo, localização do navegador e validação de matrícula**. Documentação revisada em **06/10/2026**.
+Sistema acadêmico desenvolvido como TCC para gerenciar turmas e registrar presença com **QR Code rotativo, localização do navegador e validação de vínculo em turma**. Documentação revisada em **12/10/2026**.
 
 O Django serve tanto as páginas quanto a API. O banco é SQLite, salvo no próprio computador. **O fluxo de execução do projeto usa sempre Django e Cloudflare Tunnel juntos**, com acesso pelo endereço HTTPS do túnel no computador e no celular.
 
@@ -16,13 +16,13 @@ Já instalou o projeto? Vá direto para [Rodar o projeto com Django e Cloudflare
 - **Presença:** dentro do raio, confirma; fora do raio, rejeita sem gravar e permite nova tentativa. Uma presença confirmada não é duplicada nem sobrescrita.
 - **Frequência:** considera somente chamadas encerradas. O raio inicial é de 100 m, ajustável na instituição e copiado ao abrir cada chamada.
 
-O navegador usa sessão Django com cookie `HttpOnly` e proteção CSRF. A API também oferece JWT. Os painéis consultam atualizações periodicamente enquanto estão abertos.
+O navegador usa sessão Django com cookie `HttpOnly` e proteção CSRF. A API também oferece JWT. Os avisos de chamadas do aluno e os registros da chamada em andamento são consultados em intervalos de cinco segundos. Os indicadores e relatórios não têm atualização periódica geral; recarregue o painel para consultar os dados mais recentes.
 
 Veja [Login e fotos de perfil](docs/PERFIL_E_LOGIN.md). As fotos ficam em `backend/media/` e devem acompanhar o banco nos backups.
 
 ## Pré-requisitos
 
-- **Python 3.11 a 3.14**, com `pip` e `venv` disponíveis.
+- **Python 3.11 a 3.14**, com `pip` e `venv` disponíveis. O ambiente usado na verificação foi Python 3.14; veja a [compatibilidade do Django 5.2](https://docs.djangoproject.com/en/5.2/faq/install/#what-python-version-can-i-use-with-django).
 - **Git**, se for clonar o repositório; também é possível baixar e extrair o projeto.
 - **Cloudflared**, necessário para abrir o túnel HTTPS usado no acesso ao projeto.
 - **Node.js**, opcional, para executar os testes JavaScript.
@@ -102,7 +102,9 @@ Mantenha os cookies seguros como `True`, pois o acesso será por HTTPS. Se já u
 .\.venv\Scripts\python.exe backend/manage.py prepare_local
 ```
 
-Esse comando aplica as migrations e verifica a configuração. Na primeira execução, cria `backend/db.sqlite3`; quando já existe banco, faz uma cópia em `backend/backups/` antes de migrar. As migrations também cadastram a instituição inicial AEMS.
+Esse comando aplica as migrations e verifica a configuração. Na primeira execução, cria `backend/db.sqlite3`; quando já existe banco, faz uma cópia em `backend/backups/` antes de migrar. As migrations cadastram a instituição inicial AEMS quando são aplicadas pela primeira vez. Não criam usuários nem o cenário de demonstração.
+
+Se o banco foi zerado mantendo o histórico de migrations, executar `prepare_local` novamente **não recria a AEMS nem as contas removidas**. Siga [Começar com um banco vazio](#começar-com-um-banco-vazio).
 
 ### 4. Criar o administrador
 
@@ -184,7 +186,17 @@ Por exemplo, para administrar as instituições, acrescente `/admin/` à URL rea
 
 ### 5. Encerrar e iniciar novamente
 
-Para encerrar, pressione `Ctrl+C` nos dois terminais. Na próxima execução, repita os passos 1 a 4: inicie Django e Cloudflare, atualize o hostname em `ALLOWED_HOSTS` e a origem em `CSRF_TRUSTED_ORIGINS` quando a URL mudar, reinicie o Django e abra o endereço HTTPS atual nos dois aparelhos.
+Para encerrar tudo, pressione `Ctrl+C` nos dois terminais.
+
+Para **trocar apenas o túnel**, pressione `Ctrl+C` no terminal do Cloudflare e execute novamente:
+
+```powershell
+cloudflared tunnel --url http://127.0.0.1:8000
+```
+
+Copie a nova URL, substitua o hostname antigo em `ALLOWED_HOSTS` e a origem antiga em `CSRF_TRUSTED_ORIGINS`, salve o `.env` e reinicie somente o Django. Deixe o novo túnel rodando. Abra o novo endereço e faça login novamente nos aparelhos; o QR deve ser gerado pelo endereço novo.
+
+Na próxima execução completa, repita os passos 1 a 4.
 
 O túnel torna o servidor de desenvolvimento acessível pela internet enquanto está ligado. Esse fluxo é destinado a testes e demonstrações.
 
@@ -199,12 +211,14 @@ Pare o Django e execute na **raiz do projeto**:
 
 Depois siga [Rodar o projeto com Django e Cloudflare](#rodar-o-projeto-com-django-e-cloudflare). Não é necessário recriar o administrador ou a `.venv` a cada execução.
 
+Para alterar somente HTML, CSS ou JavaScript em desenvolvimento, salve os arquivos e recarregue a página; `Ctrl+F5` ajuda a descartar o cache no computador. Não é necessário fechar o túnel. Alterações no `.env` exigem reiniciar o Django.
+
 ## Fazer a primeira chamada
 
-1. **Confira a instituição:** entre no admin, abra **Instituições** e confira latitude, longitude e raio do campus. A AEMS já vem nas migrations; confira se os valores atendem ao local do teste. Uma instituição nova precisa de confirmação administrativa da localização antes de abrir chamadas.
+1. **Confira a instituição:** entre no admin, abra **Instituições** e confira latitude, longitude e raio do campus. A AEMS é criada na aplicação inicial das migrations; se não estiver no banco, cadastre a instituição do teste. Uma instituição nova precisa de confirmação administrativa da localização antes de abrir chamadas.
 2. **Cadastre o professor:** na tela de cadastro, escolha o perfil de professor e uma instituição ativa. Também é possível adicionar uma nova instituição nessa tela.
 3. **Prepare a aula:** no painel do professor, crie matéria, turma e aula. Compartilhe o **código de 8 caracteres da turma** com o aluno.
-4. **Cadastre o aluno:** informe a matrícula, faça login e use **Entrar em uma turma** com o código recebido.
+4. **Cadastre o aluno:** informe a matrícula, faça login e use **Entrar na turma** com o código recebido.
 5. **Abra a chamada:** no painel do professor, selecione a aula e inicie a chamada para exibir o QR Code.
 6. **Confirme a presença:** o aluno lê o QR com a câmera do celular, abre o link no navegador em que está logado e permite a localização.
 7. **Confira e encerre:** acompanhe o resultado no painel do professor e encerre a chamada para incluí-la no cálculo da frequência.
@@ -235,14 +249,25 @@ Na raiz do projeto:
 .\.venv\Scripts\python.exe -m pip check
 .\.venv\Scripts\python.exe backend/manage.py check
 .\.venv\Scripts\python.exe backend/manage.py makemigrations --check --dry-run
-.\.venv\Scripts\python.exe backend/manage.py test accounts.test_medium_issues attendance.test_confirmation
+.\.venv\Scripts\python.exe backend/manage.py test accounts attendance courses --testrunner accounts.browser_profiles.BrowserTestRunner --noinput
 ```
+
+A suíte usa SQLite em arquivo temporário, sem preencher ou alterar o banco local. Inclui cadastro, autenticação, perfil, chamadas, frequência e o comando de demonstração. O nome `BrowserTestRunner` identifica o executor que isola o banco; esse comando não exige abrir o Chrome.
 
 Se tiver Node.js instalado, execute também os testes de confirmação, renovação do QR e autenticação do navegador:
 
 ```powershell
 node --test frontend/attendance-flow.test.cjs frontend/browser-auth.test.cjs
 ```
+
+Os testes opcionais em Chrome verificam o navegador de fato. Com o Chrome instalado:
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install playwright
+.\.venv\Scripts\python.exe backend/manage.py test accounts.browser_layout accounts.browser_profiles --testrunner accounts.browser_profiles.BrowserTestRunner --noinput
+```
+
+Eles também usam banco temporário, criam capturas locais em `output/` e configuram cookies para HTTP apenas no processo de teste. Não precisam de túnel nem alteram o `.env`.
 
 Os testes automatizados complementam o [roteiro manual no celular](docs/TESTE_CELULAR.md), que deve ser executado nos aparelhos usados na apresentação.
 
@@ -252,21 +277,47 @@ Backend com Django 5.2 LTS, Django REST Framework, Simple JWT, CORS, `python-dot
 
 ```text
 backend/
-  accounts/       usuários, autenticação e frequência
+  accounts/       usuários, autenticação, perfil e endpoints do aluno
   courses/        instituições, matérias, turmas e aulas
-  attendance/     sessões de chamada, presença e geolocalização
+  attendance/     sessões de chamada, presença, frequência e geolocalização
   backend/        configurações, rotas e APIs dos painéis
   templates/      bases e componentes compartilhados
   manage.py       comandos de administração do Django
 frontend/         páginas, estilos, marca, scripts e testes JavaScript
-docs/             guia técnico e roteiro de testes
+docs/             guias de execução, interface, domínio, demonstração e testes
 .env.example      modelo das variáveis de ambiente
 requirements.txt  bibliotecas Python
 ```
 
 Detalhes de arquitetura, contratos da API e regras de negócio estão no [Guia técnico](docs/GUIA_TECNICO.md).
 
+Os nomes dos conceitos estão no [Glossário do AURA](GLOSSARY.md). As [Regras de domínio](docs/REGRAS_DE_DOMINIO.md) descrevem o comportamento atual de turmas, chamadas e frequência e distinguem as decisões ainda em aberto.
+
+Para alterações visuais e navegação, veja [Interface do AURA](docs/INTERFACE.md).
+
+## Começar com um banco vazio
+
+O Git não contém usuários, senhas, fotos ou o banco de dados. Depois de uma limpeza completa, recrie o administrador com `createsuperuser`, cadastre uma instituição pelo admin (ou pelo cadastro de professor) e confirme sua localização. Em seguida, cadastre professor e aluno e prepare as turmas.
+
+Se quiser somente preencher as telas para prints, após aplicar as migrations execute:
+
+```powershell
+.\.venv\Scripts\python.exe backend/manage.py seed_demo
+```
+
+O comando exibe a senha das contas novas no terminal e não cria administrador. Veja os acessos e o roteiro em [Demonstração](docs/DEMONSTRACAO.md). Suas coordenadas são fictícias; para testar GPS com aparelhos, configure a instituição do local real do ensaio.
+
+`prepare_local` atualiza a estrutura e faz backup; não é um comando para zerar ou restaurar dados. Uma limpeza não exige apagar migrations. Os backups do banco ficam em `backend/backups/`; para recuperar também fotos, é necessária uma cópia correspondente de `backend/media/`.
+
+## O que fica fora do Git
+
+O `.gitignore` exclui `.env`, ambientes virtuais, bancos SQLite, fotos enviadas, caches, logs, `backend/backups/`, `output/` e `.agents/skill-backups/`. Capturas e propostas de imagem de `output/` são artefatos locais; os arquivos usados pelo site ficam em `frontend/`.
+
+Mantenha versionados `.env.example`, `requirements.txt`, código, migrations, testes, documentação e o comando `seed_demo`. Os dados criados por esse comando permanecem apenas no banco de cada instalação.
+
 ## Estado do projeto e dados
+
+Para preencher as telas com usuários, turmas e frequências fictícias, consulte o [cenário de demonstração e roteiro para prints](docs/DEMONSTRACAO.md). O comando `seed_demo` preserva os cadastros existentes.
 
 O projeto está em fase de validação final do MVP e **ainda não está homologado para uso institucional**. A localização do navegador pode ser imprecisa ou manipulada; o sistema não garante presença física nem elimina fraude. Não há biometria, verificação de Wi-Fi/IP institucional ou notificações push com a página fechada.
 

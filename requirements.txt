@@ -13,7 +13,7 @@ python-dotenv>=1.0,<2.0
 requests>=2.34,<3.0
 drf-spectacular>=0.27,<1.0
 
-# QR Code gerado em SVG (dispensa Pillow)
+# QR Code gerado em SVG (o QR nao usa Pillow; as fotos de perfil usam)
 qrcode>=8.2,<9.0
 
 # Cloudflare Tunnel: dependencia externa necessaria ao fluxo de execucao do AURA.

@@ -1,6 +1,6 @@
 ﻿# Guia técnico do AURA
 
-Referência da implementação em **01/10/2026**.
+Referência técnica do projeto. Código e documentação conferidos em **12/10/2026**. Os conceitos estão no [Glossário](../GLOSSARY.md) e as políticas atuais nas [Regras de domínio](REGRAS_DE_DOMINIO.md).
 
 ## 1. Arquitetura
 
@@ -8,18 +8,23 @@ Django 5.2 LTS e DRF no backend; templates Django, HTML/CSS/JavaScript puro no f
 
 - `backend/backend/settings.py`: ambiente, SQLite, JWT e CORS.
 - `backend/backend/urls.py`: páginas explícitas (inclusive com `DEBUG=False`), APIs e OpenAPI.
-- `backend/backend/ui_api.py`: perfil e dados dos painéis; contagem de presenças agregada no banco e agrupamento de relatórios em uma passagem.
-- `backend/accounts/`: usuário, cadastro, login e frequência.
-- `backend/courses/`: instituição, matéria, turma, matrícula e aula.
+- `backend/backend/ui_api.py`: autorização e apresentação dos dados dos painéis; consome o módulo compartilhado de frequência.
+- `backend/accounts/profile.py`: perfil, fotos privadas e enquadramento da imagem.
+- `backend/accounts/`: usuário, cadastro, login, perfil e endpoints do aluno.
+- `backend/courses/`: instituição, matéria, turma, vínculo em turma e aula.
 - `backend/attendance/`: sessão de chamada, resultado e geofence.
+- `backend/attendance/frequency.py`: seleção de chamadas, contagens, faltas, percentual, situação e média de frequência em lote.
 - `backend/templates/`: bases e includes compartilhados.
 - `frontend/`: cinco páginas, `app.css`, marca, componentes e scripts.
+- `backend/courses/management/commands/seed_demo.py`: criação repetível do cenário fictício de demonstração.
 
-Dentro de `backend`, com a `.venv` ativada, inicie o Django com `python manage.py runserver 127.0.0.1:8000`. Em outro terminal, execute `cloudflared tunnel --url http://127.0.0.1:8000`. A configuração da URL e os comandos completos estão no [README](../README.md#rodar-o-projeto-com-django-e-cloudflare). Não há armazenamento de uploads implementado no fluxo atual.
+Dentro de `backend`, com a `.venv` ativada, inicie o Django com `python manage.py runserver 127.0.0.1:8000`. Em outro terminal, execute `cloudflared tunnel --url http://127.0.0.1:8000`. A configuração da URL e os comandos completos estão no [README](../README.md#rodar-o-projeto-com-django-e-cloudflare). Fotos de perfil são armazenadas em `backend/media/` e servidas por uma rota autenticada; veja [Login e fotos de perfil](PERFIL_E_LOGIN.md).
 
 ## 2. Autenticação e permissões
 
 O navegador usa `POST /api/auth/login/` e sessão Django com cookie `HttpOnly`, `SameSite=Lax` e duração de um dia desde o login. A resposta traz apenas o perfil; o JavaScript não recebe a credencial de sessão. `POST /api/auth/logout/` apaga a sessão no servidor. Sessão expirada leva a um novo login, preservando o destino do QR. O frontend remove JWTs legados do `localStorage` ao carregar, sem ler ou gravar novas credenciais ali.
+
+O login aceita usuário com espaços ou e-mail; a comparação de e-mail ignora maiúsculas e minúsculas. Não há autenticação Google. Nome exibido, foto e enquadramento são editados pelas rotas de perfil; o nome de login permanece independente do nome exibido.
 
 Login e logout exigem CSRF inclusive para visitantes; demais operações por sessão usam a [proteção CSRF do DRF](https://www.django-rest-framework.org/api-guide/authentication/#sessionauthentication). O template inicial gera o token e o frontend envia `X-CSRFToken` nas operações de escrita, lendo o cookie atualizado após login. O cookie de CSRF é legível pelo JavaScript; ele não é uma credencial de autenticação. Cookies `HttpOnly` limitam a extração da credencial, mas não tornam a aplicação imune a ações via XSS.
 
@@ -41,7 +46,11 @@ O administrador pode acessar `/admin/courses/instituicao/`, conferir endereço, 
 
 O professor pode vincular múltiplas instituições. Ao abrir uma sessão, o backend usa a primeira instituição ativa da relação; se nenhuma for encontrada, usa o vínculo singular legado e, por último, as coordenadas legadas do professor. A interface ainda não escolhe campus por aula. O fallback singular não revalida o campo `ativa`.
 
+Se a instituição escolhida não possui coordenadas, a abertura é rejeitada; o sistema não procura outra instituição com localização disponível.
+
 A migration `courses/0004_confirm_aems_coordinates.py` grava a AEMS em latitude `-20.786820236467992`, longitude `-51.668829782798554`. Isso descreve o código de inicialização, não comprova a localização física de cada instalação; confira o banco e o raio antes do teste.
+
+A AEMS é criada por `courses/0003_seed_aems.py`. Essas migrations são executadas uma vez: uma limpeza com `flush` preserva seu histórico, por isso `migrate` ou `prepare_local` não repõem uma instituição removida. Cadastre a instituição necessária no admin ou pelo fluxo de cadastro do professor.
 
 A turma possui código aleatório único de **8 caracteres**, exibido ao professor. O aluno envia `codigo_acesso` para entrar. `link_acesso` e a compatibilidade com convite antigo permanecem no backend para instalações existentes. Código da turma é diferente do token de uma chamada: não substitui o QR para registrar presença.
 
@@ -87,6 +96,22 @@ As faltas do relatório são total de sessões encerradas menos presenças váli
 
 Exclusões de matéria, turma, aula ou sessão podem apagar o histórico relacionado por cascata. Não há justificativa de falta, alteração auditada de presença ou arquivamento acadêmico implementados.
 
+### Organização do cálculo
+
+`attendance.frequency.consultar_frequencias(turma_ids, aluno_id=None)` é a entrada compartilhada pela consulta individual, lista de turmas do aluno e painel. Ela recebe IDs de turmas com acesso já autorizado pelo chamador. O filtro opcional de aluno restringe os vínculos e as presenças consultadas; a autorização continua nas views.
+
+O resultado contém `vinculos`, com a frequência de cada vínculo, e `turmas`, com quantidade de chamadas, quantidade de alunos considerados e média. Os vínculos já incluem os metadados de aluno, turma, matéria e professor. Os chamadores somente traduzem esses resultados para seus contratos; o campo legado `aulas` do painel continua representando chamadas encerradas.
+
+O módulo executa até duas consultas para IDs já materializados, independentemente da quantidade de turmas e alunos. A primeira carrega vínculos, metadados e as duas contagens na mesma instrução SQL, para que um encerramento entre leituras não misture o total de chamadas com presenças de outro momento. O relacionamento de presenças é filtrado pelo aluno do vínculo com [FilteredRelation](https://docs.djangoproject.com/en/5.2/ref/models/querysets/#filteredrelation-objects). A segunda consulta só é necessária para contar chamadas das turmas sem vínculos no conjunto consultado. Um conjunto vazio não consulta o banco.
+
+Não há cache nem alteração de modelos. A média respeita o conjunto consultado: todos os vínculos no painel do professor e somente o próprio aluno no painel do aluno. Os percentuais são classificados antes do arredondamento; a média usa os percentuais já arredondados, como antes.
+
+Os contratos e os casos de borda estão em `attendance/test_frequency.py`; os testes existentes em `accounts/test_medium_issues.py` continuam conferindo a atualização de todos os relatórios ao encerrar uma chamada. A cobertura verifica também isolamento de usuários, histórico anterior ao vínculo, chamadas repetidas por aula, registros inválidos legados, encerramento intercalado entre leituras e quantidade de consultas que não cresce por linha.
+
+`UI.percent` mostra no máximo uma casa decimal na interface; a API de frequência conserva duas. O CSV do professor usa os valores da API, com cabeçalho **Chamadas**, e é gerado no navegador com os filtros atuais. Não há endpoint separado para exportá-lo.
+
+Os avisos do aluno e os resultados da chamada ativa consultam a API em intervalos de cinco segundos. Os demais indicadores e relatórios são carregados ao abrir a página e em eventos específicos: o professor atualiza após suas alterações; o resumo do aluno também atualiza ao voltar à aba ou entrar em uma turma. Eles não têm um temporizador geral de atualização. Recarregar o painel consulta os dados atuais.
+
 ## 6. Rotas principais
 
 - Cadastro: `POST /api/register/`. Navegador: `POST /api/auth/login/` e `/api/auth/logout/`. Clientes JWT: `POST /api/login/` e `/api/token/refresh/`.
@@ -95,7 +120,8 @@ Exclusões de matéria, turma, aula ou sessão podem apagar o histórico relacio
 - Sessões: `POST /api/sessoes/`; `GET /api/sessoes/{id}/token/` e `/resultados/`; `POST /api/sessoes/{id}/encerrar/`.
 - Aluno: `GET /api/sessoes/ativas/`; `POST /api/sessoes/{id}/preparar/`; `POST /api/presenca/registrar/`.
 - Turmas/frequência do aluno: `GET /api/aluno/turmas/`, `/api/aluno/minha-frequencia/`; `POST /api/aluno/entrar-turma/`.
-- Interface: `GET /api/interface/perfil/` e `/api/interface/painel/`.
+- Perfil: `GET` e `PATCH /api/interface/perfil/`; `GET` e `DELETE /api/interface/perfil/foto/`. O upload usa o `PATCH` do perfil com formulário multipart; a remoção usa a rota da foto. A leitura da foto sempre corresponde ao usuário autenticado.
+- Painéis: `GET /api/interface/painel/`.
 - Documentação gerada: `/api/schema/`, `/api/schema/swagger-ui/`, `/api/schema/redoc/`. APIs personalizadas ainda precisam de anotações para um schema completo.
 
 ## 7. Configuração e manutenção
@@ -104,12 +130,16 @@ Use `.env.example` como referência e mantenha `DEBUG=True` no uso local. Quando
 
 O cadastro usa instituições e não aceita CEP como configuração de localização. A geocodificação automática de usuários por CEP e sua thread foram removidas. Campos legados de CEP/coordenadas permanecem no modelo para preservar dados antigos; salvar um usuário não faz consultas de rede. A busca administrativa de coordenadas da instituição continua disponível.
 
-Migrations antigas de WebAuthn precisam permanecer para atualizar bancos existentes; `attendance/0005_remove_webauthn.py` remove as estruturas de biometria. Não apagar migrations nem banco para limpar o projeto.
+Migrations antigas de WebAuthn precisam permanecer para atualizar bancos existentes; `attendance/0005_remove_webauthn.py` remove as estruturas de biometria. Para zerar cadastros, preserve o esquema e o histórico de migrations e faça backup antes de qualquer limpeza; apagar arquivos de migration não é uma limpeza de dados.
+
+`prepare_local` faz backup do SQLite existente em `backend/backups/`, aplica migrations e executa `check`. Não copia fotos, não zera o banco e não restaura backups. Fotos em `backend/media/` precisam de cópia própria. `.env`, banco, fotos, backups, artefatos de `output/` e backups de skills ficam fora do Git; `.env.example`, testes e documentação permanecem versionados.
+
+O cenário de [demonstração](DEMONSTRACAO.md) é criado sob demanda com `seed_demo`; não roda durante a inicialização do servidor nem durante migrations. O comando preserva as senhas de contas existentes e exibe uma senha somente para as contas que criar. Não cria superusuário.
 
 ## 8. Verificação antes da apresentação
 
-No diretório `backend`, executar `python manage.py check` e `python manage.py makemigrations --check --dry-run`.
+Na raiz, execute os comandos de [verificação do README](../README.md#verificações-e-testes). Os testes de backend usam banco temporário; os opcionais de navegador exigem Playwright e Chrome.
 
-O banco de apresentação mantém somente as instituições cadastradas; professores, alunos, matérias, turmas, aulas, sessões e presenças devem ser criados durante o ensaio ou demonstração.
+O conteúdo do banco depende de cada instalação. Após uma limpeza completa, não há contas nem instituições; crie um administrador e os cadastros do ensaio, ou use `seed_demo` para os prints. Aplicar novamente migrations já registradas não repõe esses dados. As coordenadas fictícias da demonstração precisam ser substituídas pelas do local real para um teste de GPS.
 
 Execute o roteiro de [TESTE_CELULAR.md](TESTE_CELULAR.md) para validar navegação, câmera, GPS, QR Code e chamada antes da banca.

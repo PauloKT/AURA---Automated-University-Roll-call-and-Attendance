@@ -35,3 +35,10 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Artefatos gerados, capturas, propostas de imagens e acessos locais
+/output/
+
+# Backups locais do banco e de versões anteriores das skills
+/backend/backups/
+/.agents/skill-backups/

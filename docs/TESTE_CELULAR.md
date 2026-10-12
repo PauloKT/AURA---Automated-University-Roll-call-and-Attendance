@@ -1,6 +1,6 @@
 ﻿# Testar chamada pelo celular
 
-Revisado em **06/10/2026**. Professor e aluno devem usar o mesmo endereço HTTPS. No teste local, o banco continua no computador que executa Django.
+Revisado em **12/10/2026**. Professor e aluno devem usar o mesmo endereço HTTPS. No teste local, o banco continua no computador que executa Django.
 
 ## Preparar o computador ou notebook
 
@@ -19,15 +19,17 @@ Se não estiver no PATH, use o local em que foi instalado. Exemplo:
 & "C:\Program Files (x86)\cloudflared\cloudflared.exe" tunnel --url "http://127.0.0.1:8000"
 ```
 
-O argumento é somente a URL: não copie colchetes nem sintaxe de link Markdown. Se o serviço responder com erro 409, tente novamente mais tarde; esse erro de provisionamento ocorre antes de o túnel alcançar o Django.
+O argumento é somente a URL: não copie colchetes nem sintaxe de link Markdown. Aguarde o terminal informar a URL HTTPS antes de configurar o acesso.
 
 5. Adicione o hostname retornado (sem `https://`) a `ALLOWED_HOSTS` e a URL HTTPS completa a `CSRF_TRUSTED_ORIGINS`. Mantenha `SESSION_COOKIE_SECURE=True` e `CSRF_COOKIE_SECURE=True`. Reinicie o Django. Essas opções são necessárias também para login e formulários do sistema. Quando iniciar outro túnel, atualize os endereços no `.env` e reinicie o Django novamente.
 6. Abra o endereço HTTPS no computador e no celular; mantenha servidor e túnel ligados. A rede da faculdade precisa permitir acesso ao domínio. O celular pode usar outra rede com internet.
-7. Encerre servidor e túnel após o ensaio: o túnel torna o servidor de desenvolvimento acessível pela internet.
+7. Encerre servidor e túnel após o ensaio com `Ctrl+C` em cada terminal: o túnel torna o servidor de desenvolvimento acessível pela internet. Para trocar somente o túnel, pare e reinicie `cloudflared`, atualize o `.env` com a nova URL e reinicie o Django; mantenha o túnel novo aberto.
 
 Se o professor abrir em `localhost` ou `127.0.0.1`, o QR apontará para o próprio celular. Por isso ele também precisa abrir o endereço HTTPS. GPS em celular requer contexto seguro, normalmente HTTPS.
 
 ## Professor
+
+Se o banco foi zerado, recrie primeiro o administrador com `.\.venv\Scripts\python.exe backend/manage.py createsuperuser` e os cadastros do ensaio. As migrations já aplicadas não recriam a AEMS depois da limpeza. Para um roteiro com dados fictícios, veja [Demonstração](DEMONSTRACAO.md); o teste de GPS ainda exige coordenadas reais do local.
 
 Se a instituição ainda não existir, no cadastro escolha **Sou professor → Adicionar nova instituição** e preencha o endereço do campus. Antes do ensaio, um administrador deve entrar em `/admin/courses/instituicao/`, abrir a instituição cadastrada, conferir as coordenadas e salvar latitude, longitude e raio. Sem essa confirmação, iniciar chamada continua bloqueado.
 
@@ -35,13 +37,13 @@ Se a instituição ainda não existir, no cadastro escolha **Sou professor → A
 2. Crie ou selecione matéria, turma e aula.
 3. Mostre ao aluno o **código de 8 caracteres da turma**.
 4. Inicie a chamada e mantenha o QR visível. Seu token dura 30 segundos e é renovado pelas consultas do painel.
-5. Acompanhe os resultados abaixo do QR: nome, presente/falta, horário e quantidade aguardando.
+5. Acompanhe os resultados abaixo do QR: nome, presença confirmada, horário e quantidade aguardando. O contador **Faltas registradas** inclui somente registros inválidos legados, quando existirem; as faltas por ausência de confirmação aparecem no relatório após o encerramento.
 6. Encerre a chamada ao terminar.
 
 ## Aluno
 
 1. Faça login no mesmo endereço HTTPS, usando o navegador que será aberto pela câmera.
-2. Selecione **Entrar em uma turma**, digite o código e confirme a matrícula.
+2. Selecione **Entrar na turma**, digite o código e confirme a entrada na turma.
 3. O painel consulta chamadas disponíveis a cada cinco segundos enquanto está visível.
 4. Leia o QR com a câmera e abra o link no mesmo navegador. Se abrir um navegador interno sem login, autentique-se; pode ser necessário ler o QR atual novamente.
 5. Permita a localização e aguarde o resultado: presença dentro do raio ou erro com opção de tentar novamente fora dele.
@@ -52,7 +54,7 @@ Fora do raio, nenhuma presença é gravada. Corrija a localização e tente nova
 
 ## Conferir a localização
 
-O raio é medido da coordenada institucional salva na abertura da sessão, não da posição do notebook. A migration já preenche coordenadas da AEMS; confira no admin se correspondem ao campus e se o raio atende à sala usada.
+O raio é medido da coordenada institucional salva na abertura da sessão, não da posição do notebook. Na instalação inicial, as migrations preenchem coordenadas da AEMS; confira no admin se a instituição existe, se as coordenadas correspondem ao campus e se o raio atende à sala usada.
 
 Em casa, uma chamada da AEMS deve rejeitar a tentativa por distância, sem gravar presença. Para testar em outro local, use uma instituição de teste com coordenadas reais desse local. Professores com várias instituições ainda não escolhem o campus ao iniciar a aula; confira qual foi usado.
 
@@ -70,12 +72,13 @@ Em casa, uma chamada da AEMS deve rejeitar a tentativa por distância, sem grava
 - [ ] Nenhuma requisição de imagem do QR vai para outro domínio.
 - [ ] Conferir frequência e CSV manualmente com uma turma de dados conhecidos.
 - [ ] Abrir uma chamada não altera a frequência; encerrá-la inclui as presenças e faltas dessa chamada nos relatórios.
+- [ ] Recarregar o painel do aluno depois do encerramento para conferir a frequência: os relatórios não têm o mesmo temporizador dos avisos de chamada.
 - [ ] Fazer login novamente após a atualização; sair encerra a sessão, inclusive ao tentar reutilizar a página anterior.
 - [ ] Cadastro aceita e-mail institucional e carrega instituições sem expor coordenadas na resposta pública.
-- [ ] Testar Android/iPhone disponíveis, menu, formulários e páginas em tela pequena.
+- [ ] Testar Android/iPhone disponíveis, navegação inferior, saída da conta, formulários e páginas em tela pequena.
 - [ ] Registrar data, dispositivo, navegador, rede, cenário e resultado real de cada ensaio.
 
-O teste fora do raio relatado anteriormente usava a regra antiga de falta gravada. Repita o ensaio com a regra atual e documente o sucesso dentro do raio e a nova tentativa. A imagem do QR é gerada pelo próprio Django; os avisos não funcionam como push com navegador fechado.
+Documente o sucesso dentro do raio, a rejeição fora dele e a nova tentativa. A imagem do QR é gerada pelo próprio Django; os avisos não funcionam como push com navegador fechado.
 
 ## Ensaio de chamadas simultâneas
 

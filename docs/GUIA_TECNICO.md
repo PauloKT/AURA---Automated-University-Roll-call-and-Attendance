@@ -1,6 +1,6 @@
 ﻿# Guia técnico do AURA
 
-Referência técnica do projeto. Código e documentação conferidos em **12/10/2026**. Os conceitos estão no [Glossário](../GLOSSARY.md) e as políticas atuais nas [Regras de domínio](REGRAS_DE_DOMINIO.md).
+Referência técnica do projeto. Código e documentação conferidos em **12/10/2026**. Este guia descreve os conceitos e as regras implementadas; a instalação e as limitações conhecidas estão no [README](../README.md).
 
 ## 1. Arquitetura
 
@@ -18,7 +18,7 @@ Django 5.2 LTS e DRF no backend; templates Django, HTML/CSS/JavaScript puro no f
 - `frontend/`: cinco páginas, `app.css`, marca, componentes e scripts.
 - `backend/courses/management/commands/seed_demo.py`: criação repetível do cenário fictício de demonstração.
 
-Dentro de `backend`, com a `.venv` ativada, inicie o Django com `python manage.py runserver 127.0.0.1:8000`. Em outro terminal, execute `cloudflared tunnel --url http://127.0.0.1:8000`. A configuração da URL e os comandos completos estão no [README](../README.md#rodar-o-projeto-com-django-e-cloudflare). Fotos de perfil são armazenadas em `backend/media/` e servidas por uma rota autenticada; veja [Login e fotos de perfil](PERFIL_E_LOGIN.md).
+Dentro de `backend`, com a `.venv` ativada, inicie o Django com `python manage.py runserver 127.0.0.1:8000`. Em outro terminal, execute `cloudflared tunnel --url http://127.0.0.1:8000`. A configuração da URL e os comandos completos estão no [README](../README.md#rodar-o-projeto-com-django-e-cloudflare). Fotos de perfil são armazenadas em `backend/media/` e servidas por uma rota autenticada; veja [Conta e foto de perfil](../README.md#conta-e-foto-de-perfil).
 
 ## 2. Autenticação e permissões
 
@@ -134,7 +134,7 @@ Migrations antigas de WebAuthn precisam permanecer para atualizar bancos existen
 
 `prepare_local` faz backup do SQLite existente em `backend/backups/`, aplica migrations e executa `check`. Não copia fotos, não zera o banco e não restaura backups. Fotos em `backend/media/` precisam de cópia própria. `.env`, banco, fotos, backups, artefatos de `output/` e backups de skills ficam fora do Git; `.env.example`, testes e documentação permanecem versionados.
 
-O cenário de [demonstração](DEMONSTRACAO.md) é criado sob demanda com `seed_demo`; não roda durante a inicialização do servidor nem durante migrations. O comando preserva as senhas de contas existentes e exibe uma senha somente para as contas que criar. Não cria superusuário.
+O cenário de [demonstração](../README.md#dados-de-demonstração) é criado sob demanda com `seed_demo`; não roda durante a inicialização do servidor nem durante migrations. O comando preserva as senhas de contas existentes e exibe uma senha somente para as contas que criar. Não cria superusuário.
 
 ## 8. Verificação antes da apresentação
 
@@ -142,4 +142,4 @@ Na raiz, execute os comandos de [verificação do README](../README.md#verifica�
 
 O conteúdo do banco depende de cada instalação. Após uma limpeza completa, não há contas nem instituições; crie um administrador e os cadastros do ensaio, ou use `seed_demo` para os prints. Aplicar novamente migrations já registradas não repõe esses dados. As coordenadas fictícias da demonstração precisam ser substituídas pelas do local real para um teste de GPS.
 
-Execute o roteiro de [TESTE_CELULAR.md](TESTE_CELULAR.md) para validar navegação, câmera, GPS, QR Code e chamada antes da banca.
+Execute o roteiro de [teste pelo celular](../README.md#teste-pelo-celular) para validar navegação, câmera, GPS, QR Code e chamada antes da banca.

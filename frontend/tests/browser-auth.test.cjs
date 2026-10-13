@@ -28,7 +28,7 @@ function harness(fetch) {
     URL, URLSearchParams, fetch,
   };
   vm.createContext(context);
-  vm.runInContext(fs.readFileSync(path.join(__dirname, 'api.js'), 'utf8'), context);
+  vm.runInContext(fs.readFileSync(path.join(__dirname, '../static/js', 'api.js'), 'utf8'), context);
   context.Aura = context.window.Aura;
   return { context, api: context.Aura, removed, el, events };
 }
@@ -102,7 +102,7 @@ for (const role of ['aluno', 'professor']) {
       return response({ user: { role } });
     });
     ui.context.window.location.search = '?next=' + encodeURIComponent('/confirmar-presenca.html?sessaoId=1&token=scanned');
-    vm.runInContext(fs.readFileSync(path.join(__dirname, 'login.js'), 'utf8'), ui.context);
+    vm.runInContext(fs.readFileSync(path.join(__dirname, '../static/js', 'login.js'), 'utf8'), ui.context);
     ui.events.DOMContentLoaded();
     ui.el('username').value = 'usuario'; ui.el('password').value = 'senha';
     await ui.el('login-form').submit({ preventDefault() {} });

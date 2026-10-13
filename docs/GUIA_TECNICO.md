@@ -14,11 +14,22 @@ Django 5.2 LTS e DRF no backend; templates Django, HTML/CSS/JavaScript puro no f
 - `backend/courses/`: instituição, matéria, turma, vínculo em turma e aula.
 - `backend/attendance/`: sessão de chamada, resultado e geofence.
 - `backend/attendance/frequency.py`: seleção de chamadas, contagens, faltas, percentual, situação e média de frequência em lote.
-- `backend/templates/`: bases e includes compartilhados.
-- `frontend/`: cinco páginas, `app.css`, marca, componentes e scripts.
+- `frontend/templates/layouts/`: documento base e estruturas de autenticação e painéis.
+- `frontend/templates/pages/`: cinco páginas servidas pelas rotas do Django.
+- `frontend/templates/includes/`: componentes compartilhados e seções específicas em `aluno/` e `professor/`.
+- `frontend/static/`: estilos em `css/`, scripts em `js/`, imagens em `images/` e fontes em `fonts/`.
+- `frontend/tests/`: testes JavaScript de autenticação e chamada.
 - `backend/courses/management/commands/seed_demo.py`: criação repetível do cenário fictício de demonstração.
 
 Dentro de `backend`, com a `.venv` ativada, inicie o Django com `python manage.py runserver 127.0.0.1:8000`. Em outro terminal, execute `cloudflared tunnel --url http://127.0.0.1:8000`. A configuração da URL e os comandos completos estão no [README](../README.md#rodar-o-projeto-com-django-e-cloudflare). Fotos de perfil são armazenadas em `backend/media/` e servidas por uma rota autenticada; veja [Conta e foto de perfil](../README.md#conta-e-foto-de-perfil).
+
+### Organização dos templates
+
+`TEMPLATES['DIRS']` aponta para `frontend/templates/`; `STATICFILES_DIRS` aponta somente para `frontend/static/`, mantendo HTMLs e testes fora dos arquivos públicos. As rotas continuam iguais, mas carregam os templates de `pages/`.
+
+`layouts/base.html` centraliza metadados, CSS e scripts compartilhados. `layouts/auth_base.html` organiza login e cadastro; `layouts/app_base.html` reúne cabeçalho, navegação e conteúdo dos painéis. As páginas de aluno e professor incluem suas seções de `includes/aluno/` e `includes/professor/`; os formulários modais do professor ficam em `includes/professor/dialogs.html`. IDs, atributos `data-*` e ordem dos scripts fazem parte da integração com o JavaScript.
+
+Consulte [frontend/README.md](../frontend/README.md) para localizar os arquivos de cada tela. `output/` contém somente artefatos locais de verificações e pode ser removida quando esses registros não forem necessários; os testes de captura recriam a pasta.
 
 ## 2. Autenticação e permissões
 

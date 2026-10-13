@@ -1,0 +1,106 @@
+<dialog id="materia-dialog" aria-labelledby="materia-dialog-title">
+  <div class="dialog-header">
+    <h2 id="materia-dialog-title">Criar matéria</h2>
+    <button class="icon-button" data-close aria-label="Fechar">{% include 'includes/icon.html' with name='close' %}</button>
+  </div>
+  <form id="materia-form">
+    <div class="form-grid">
+      <div class="field full">
+        <label for="materia-nome">Nome *</label>
+        <input id="materia-nome" required maxlength="100" name="materia-nome" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="materia-codigo">Código da matéria *</label>
+        <input id="materia-codigo" required maxlength="20" name="materia-codigo" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="materia-carga">Carga horária (horas) *</label>
+        <input id="materia-carga" type="number" required min="1" name="materia-carga" autocomplete="off">
+      </div>
+      <div class="field full">
+        <label for="materia-freq">Frequência mínima (%) *</label>
+        <input id="materia-freq" type="number" required min="0" max="100" value="75" name="materia-freq" autocomplete="off">
+      </div>
+    </div>
+    <p id="materia-error" class="form-error" role="alert"></p>
+    <div class="form-actions">
+      <button class="button secondary" type="button" data-close>Cancelar</button>
+      <button id="create-materia-btn" type="submit">Salvar matéria</button>
+    </div>
+  </form>
+</dialog>
+<dialog id="turma-dialog" aria-labelledby="turma-dialog-title">
+  <div class="dialog-header">
+    <h2 id="turma-dialog-title">Criar turma</h2>
+    <button class="icon-button" data-close aria-label="Fechar">{% include 'includes/icon.html' with name='close' %}</button>
+  </div>
+  <form id="turma-form">
+    <div class="form-grid">
+      <div class="field full">
+        <label for="turma-materia">Matéria *</label>
+        <select id="turma-materia" required name="turma-materia" autocomplete="off"></select>
+      </div>
+      <div class="field full">
+        <label for="turma-nome">Nome da turma *</label>
+        <input id="turma-nome" required maxlength="100" placeholder="Ex.: TADS 5º período" name="turma-nome" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="turma-semestre">Semestre *</label>
+        <input id="turma-semestre" required maxlength="20" placeholder="Ex.: 2026.2" name="turma-semestre" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="turma-ano">Ano *</label>
+        <input id="turma-ano" type="number" required min="1900" max="9999" name="turma-ano" autocomplete="off">
+      </div>
+    </div>
+    <p id="turma-error" class="form-error" role="alert"></p>
+    <div class="form-actions">
+      <button class="button secondary" type="button" data-close>Cancelar</button>
+      <button id="create-turma-btn" type="submit">Salvar turma</button>
+    </div>
+  </form>
+</dialog>
+<dialog id="aula-dialog" aria-labelledby="aula-dialog-title">
+  <div class="dialog-header">
+    <h2 id="aula-dialog-title">Criar aula</h2>
+    <button class="icon-button" data-close aria-label="Fechar">{% include 'includes/icon.html' with name='close' %}</button>
+  </div>
+  <form id="aula-form">
+    <div class="form-grid">
+      <div class="field full">
+        <label for="aula-turma">Turma *</label>
+        <select id="aula-turma" required name="aula-turma" autocomplete="off"></select>
+      </div>
+      <div class="field full">
+        <label for="aula-titulo">Título *</label>
+        <input id="aula-titulo" required maxlength="200" name="aula-titulo" autocomplete="off">
+      </div>
+      <div class="field full">
+        <label for="aula-data">Data *</label>
+        <input id="aula-data" type="date" required name="aula-data" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="aula-inicio">Início *</label>
+        <input id="aula-inicio" type="time" required name="aula-inicio" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="aula-fim">Fim *</label>
+        <input id="aula-fim" type="time" required name="aula-fim" autocomplete="off">
+      </div>
+    </div>
+    <p id="aula-error" class="form-error" role="alert"></p>
+    <div class="form-actions">
+      <button class="button secondary" type="button" data-close>Cancelar</button>
+      <button id="create-aula-btn" type="submit">Salvar aula</button>
+    </div>
+  </form>
+</dialog>
+<dialog id="confirm-dialog" aria-labelledby="confirm-title">
+  <h2 id="confirm-title">Confirmar exclusão</h2>
+  <p id="confirm-description"></p>
+  <p id="confirm-error" class="form-error" role="alert"></p>
+  <div class="form-actions">
+    <button class="button secondary" data-close>Cancelar</button>
+    <button class="button danger" id="confirm-delete">Excluir</button>
+  </div>
+</dialog>

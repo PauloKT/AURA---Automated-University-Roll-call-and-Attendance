@@ -1,0 +1,20 @@
+{% extends 'layouts/app_base.html' %}
+{% load static %}
+
+{% block title %}Aluno · AURA{% endblock %}
+
+{% block content %}
+  <div id="loading" class="loading">Buscando suas turmas…</div>
+  <div id="content" style="display:none">
+    {% include 'includes/aluno/inicio.html' %}
+    {% include 'includes/aluno/turmas.html' %}
+    {% include 'includes/aluno/frequencia.html' %}
+    {% include 'includes/aluno/entrar.html' %}
+    {% include 'includes/profile.html' %}
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{% static 'js/aluno.js' %}?v=aura-interface-3"></script>
+  <script src="{% static 'js/student-workspace.js' %}?v=aura-interface-3"></script>
+{% endblock %}

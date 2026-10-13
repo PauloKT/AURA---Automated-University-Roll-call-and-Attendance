@@ -10,12 +10,12 @@ from drf_spectacular.views import (
 )
 
 urlpatterns = [
-    path('', TemplateView.as_view(template_name='login.html'), name='home'),
-    path('login.html', TemplateView.as_view(template_name='login.html'), name='login-page'),
-    path('register.html', TemplateView.as_view(template_name='register.html'), name='register-page'),
-    path('professor.html', TemplateView.as_view(template_name='professor.html', extra_context={'area': 'professor'}), name='professor-page'),
-    path('aluno.html', TemplateView.as_view(template_name='aluno.html', extra_context={'area': 'aluno'}), name='aluno-page'),
-    path('confirmar-presenca.html', TemplateView.as_view(template_name='confirmar-presenca.html', extra_context={'area': 'aluno'}), name='presence-page'),
+    path('', TemplateView.as_view(template_name='pages/login.html'), name='home'),
+    path('login.html', TemplateView.as_view(template_name='pages/login.html'), name='login-page'),
+    path('register.html', TemplateView.as_view(template_name='pages/register.html'), name='register-page'),
+    path('professor.html', TemplateView.as_view(template_name='pages/professor.html', extra_context={'area': 'professor'}), name='professor-page'),
+    path('aluno.html', TemplateView.as_view(template_name='pages/aluno.html', extra_context={'area': 'aluno'}), name='aluno-page'),
+    path('confirmar-presenca.html', TemplateView.as_view(template_name='pages/confirmar-presenca.html', extra_context={'area': 'aluno'}), name='presence-page'),
     path('api/interface/painel/', WorkspaceView.as_view(), name='workspace-data'),
     path('api/interface/perfil/', ProfileView.as_view(), name='profile-data'),
     path('api/interface/perfil/foto/', ProfilePhotoView.as_view(), name='profile-photo'),

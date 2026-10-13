@@ -299,7 +299,7 @@ A suíte usa SQLite em arquivo temporário, sem preencher ou alterar o banco loc
 Se tiver Node.js instalado, execute também os testes de confirmação, renovação do QR e autenticação do navegador:
 
 ```powershell
-node --test frontend/attendance-flow.test.cjs frontend/browser-auth.test.cjs
+node --test frontend/tests/attendance-flow.test.cjs frontend/tests/browser-auth.test.cjs
 ```
 
 Os testes opcionais em Chrome verificam o navegador de fato. Com o Chrome instalado:
@@ -323,13 +323,24 @@ backend/
   courses/        instituições, matérias, turmas e aulas
   attendance/     sessões de chamada, presença, frequência e geolocalização
   backend/        configurações, rotas e APIs dos painéis
-  templates/      bases e componentes compartilhados
   manage.py       comandos de administração do Django
-frontend/         páginas, estilos, marca, scripts e testes JavaScript
+frontend/
+  templates/
+    layouts/      base HTML e estruturas de autenticação e painéis
+    pages/        login, cadastro, professor, aluno e confirmação de presença
+    includes/     componentes compartilhados e seções de aluno/professor
+  static/
+    css/          estilos da interface
+    js/           scripts das páginas e componentes
+    images/       marca, ícones e ilustrações
+    fonts/        fonte local e licença
+  tests/          testes JavaScript
 docs/             guia técnico da aplicação
 .env.example      modelo das variáveis de ambiente
 requirements.txt  bibliotecas Python
 ```
+
+Os HTMLs são templates renderizados pelo Django; acesse as páginas pelo servidor, não abrindo os arquivos diretamente. As URLs continuam `/login.html`, `/register.html`, `/professor.html`, `/aluno.html` e `/confirmar-presenca.html`. Veja [como editar o frontend](frontend/README.md).
 
 Detalhes de arquitetura, contratos da API e regras de negócio estão no [Guia técnico](docs/GUIA_TECNICO.md).
 
@@ -353,7 +364,7 @@ Executar novamente preserva os cadastros e as senhas existentes. O comando não 
 
 ## O que fica fora do Git
 
-O `.gitignore` exclui `.env`, ambientes virtuais, bancos SQLite, fotos enviadas, caches, logs, `backend/backups/`, `output/` e `.agents/skill-backups/`. Capturas e propostas de imagem de `output/` são artefatos locais; os arquivos usados pelo site ficam em `frontend/`.
+O `.gitignore` exclui `.env`, ambientes virtuais, bancos SQLite, fotos enviadas, caches, logs, `backend/backups/`, `output/` e `.agents/skill-backups/`. A pasta `output/` guarda capturas e arquivos temporários de verificações e pode ser excluída se esses registros não forem mais necessários. O sistema não depende dela; os testes que geram capturas recriam a pasta. Os arquivos usados pelo site ficam em `frontend/`.
 
 Mantenha versionados `.env.example`, `requirements.txt`, código, migrações, testes, documentação e o comando `seed_demo`. Os dados criados por esse comando permanecem apenas no banco de cada instalação.
 

@@ -1,0 +1,89 @@
+<section data-panel="chamada" hidden>
+  <header class="page-heading">
+    <div>
+      <h1>Chamada ao vivo</h1>
+      <p>Selecione o encontro e deixe o QR Code visível para a turma.</p>
+    </div>
+    <button class="button secondary" id="projector-btn" aria-pressed="false">Modo projetor</button>
+  </header>
+  <div class="panel session-selectors">
+    <div class="field">
+      <label for="materia-select">Matéria</label>
+      <select id="materia-select" name="materia-select" autocomplete="off">
+        <option value="">Selecione uma matéria</option>
+      </select>
+      <button class="text-button" data-new="materia">Criar matéria</button>
+    </div>
+    <div class="field" id="turmas-section" style="display:none">
+      <label for="turma-select">Turma</label>
+      <select id="turma-select" name="turma-select" autocomplete="off">
+        <option value="">Selecione uma turma</option>
+      </select>
+      <button class="text-button" data-new="turma">Criar turma</button>
+    </div>
+    <div class="field" id="aulas-section" style="display:none">
+      <label for="aula-select">Aula</label>
+      <select id="aula-select" name="aula-select" autocomplete="off">
+        <option value="">Selecione uma aula</option>
+      </select>
+      <button class="text-button" data-new="aula">Criar aula</button>
+    </div>
+  </div>
+  <div id="session-section" style="display:none">
+    <div id="local-origin-warning" class="notice warning" hidden>
+      Você abriu o painel por um endereço local. Para o QR funcionar no celular, abra este painel pelo mesmo endereço HTTPS utilizado pelos alunos.
+    </div>
+    <div class="panel">
+      <div class="panel-header">
+        <div>
+          <h2 id="call-title">Pronto para começar</h2>
+          <span id="call-state" class="badge">Aguardando início</span>
+        </div>
+        <div class="actions">
+          <button class="button" id="start-session-btn">Iniciar chamada</button>
+          <button class="button danger" id="end-session-btn" hidden>Encerrar chamada</button>
+          <button class="button secondary" id="refresh-results-btn" hidden>{% include 'includes/icon.html' with name='refresh' %}Atualizar registros</button>
+        </div>
+      </div>
+      <div class="call-layout">
+        <div>
+          <div id="qr-code-container" class="qr-stage" style="display:none">
+            <img id="qr-code-img" alt="QR Code para registrar presença nesta chamada" width="330" height="330">
+            <div class="timer">
+              <span class="live-dot" aria-hidden="true"></span>
+              Novo QR Code em
+              <strong id="countdown">00:30</strong>
+            </div>
+            <p>Abra a câmera do celular e leia o código.</p>
+            <p class="location-caption">{% include 'includes/icon.html' with name='location' %}<span id="location-info"></span></p>
+          </div>
+          <div class="notice">
+            <strong>Convide os alunos para a turma</strong>
+            <p>Quem ainda não entrou deve digitar este código no painel do aluno.</p>
+            <input id="invite-code" class="code-display" readonly aria-label="Código da turma" name="invite-code" autocomplete="off">
+            <button class="text-button" id="copy-code">{% include 'includes/icon.html' with name='copy' %}Copiar código</button>
+          </div>
+        </div>
+        <div id="attendance-results" hidden>
+          <h3>Registros da chamada</h3>
+          <div class="call-metrics">
+            <div>
+              <strong id="count-present">0</strong>
+              <span>Presentes</span>
+            </div>
+            <div>
+              <strong id="count-absent">0</strong>
+              <span>Faltas registradas</span>
+            </div>
+            <div>
+              <strong id="count-pending">0</strong>
+              <span>Aguardando</span>
+            </div>
+          </div>
+          <p id="attendance-status" role="status"></p>
+          <ul id="attendance-list"></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

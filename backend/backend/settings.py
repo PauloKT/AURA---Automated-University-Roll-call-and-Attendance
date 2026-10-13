@@ -24,6 +24,7 @@ def env_list(key: str, default: list | None = None) -> list:
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+FRONTEND_DIR = BASE_DIR.parent / 'frontend'
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-dev-key-DO-NOT-USE-IN-PRODUCTION')
 DEBUG = env_bool('DEBUG', default=True)
@@ -64,7 +65,7 @@ ROOT_URLCONF = 'backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates', BASE_DIR.parent / 'frontend'],
+        'DIRS': [FRONTEND_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -102,7 +103,7 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [BASE_DIR.parent / 'frontend']
+STATICFILES_DIRS = [FRONTEND_DIR / 'static']
 MEDIA_ROOT = BASE_DIR / 'media'
 # Fotos são entregues pelo endpoint autenticado do próprio perfil.
 MEDIA_URL = '/media/'

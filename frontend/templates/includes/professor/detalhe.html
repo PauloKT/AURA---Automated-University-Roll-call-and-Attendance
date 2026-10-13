@@ -1,0 +1,21 @@
+<section data-panel="detalhe" hidden>
+  <a class="back-link" href="#turmas">{% include 'includes/icon.html' with name='arrow-left' %}Voltar para turmas</a>
+  <header class="page-heading" style="margin-top:20px">
+    <div>
+      <h1 id="group-title">Detalhes da turma</h1>
+      <p id="group-subtitle"></p>
+    </div>
+    <div class="actions">
+      <button class="button secondary" id="edit-current-group">{% include 'includes/icon.html' with name='edit' %}Editar turma</button>
+      <button class="button" id="call-current-group">Iniciar chamada</button>
+    </div>
+  </header>
+  <div class="tabs" role="tablist" aria-label="Detalhes da turma">
+    <button role="tab" aria-selected="true" data-tab="geral" id="tab-geral" aria-controls="group-detail-body">Visão geral</button>
+    <button role="tab" aria-selected="false" data-tab="alunos" id="tab-alunos" aria-controls="group-detail-body">Alunos</button>
+    <button role="tab" aria-selected="false" data-tab="aulas" id="tab-aulas" aria-controls="group-detail-body">Aulas</button>
+    <button role="tab" aria-selected="false" data-tab="frequencia" id="tab-frequencia" aria-controls="group-detail-body">Frequência</button>
+    <button role="tab" aria-selected="false" data-tab="relatorios" id="tab-relatorios" aria-controls="group-detail-body">Relatórios</button>
+  </div>
+  <div id="group-detail-body" role="tabpanel" aria-labelledby="tab-geral"></div>
+</section>

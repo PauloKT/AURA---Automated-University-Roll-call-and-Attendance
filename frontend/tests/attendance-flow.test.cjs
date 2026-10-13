@@ -56,9 +56,9 @@ function harness(file, fetch) {
   };
   context.location = context.window.location;
   vm.createContext(context);
-  vm.runInContext(fs.readFileSync(path.join(__dirname, 'api.js'), 'utf8'), context);
+  vm.runInContext(fs.readFileSync(path.join(__dirname, '../static/js', 'api.js'), 'utf8'), context);
   context.Aura = context.window.Aura;
-  vm.runInContext(fs.readFileSync(path.join(__dirname, file), 'utf8'), context);
+  vm.runInContext(fs.readFileSync(path.join(__dirname, '../static/js', file), 'utf8'), context);
   const ready = events.DOMContentLoaded();
   return {
     element, events, intervals, timers, ready,

@@ -1,0 +1,23 @@
+{% extends 'layouts/app_base.html' %}
+{% load static %}
+
+{% block title %}Professor · AURA{% endblock %}
+
+{% block content %}
+  <div id="loading" class="loading">Preparando seu espaço…</div>
+  <div id="content" style="display:none">
+    {% include 'includes/professor/inicio.html' %}
+    {% include 'includes/professor/materias.html' %}
+    {% include 'includes/professor/turmas.html' %}
+    {% include 'includes/professor/detalhe.html' %}
+    {% include 'includes/professor/relatorios.html' %}
+    {% include 'includes/professor/chamada.html' %}
+    {% include 'includes/profile.html' %}
+  </div>
+  {% include 'includes/professor/dialogs.html' %}
+{% endblock %}
+
+{% block scripts %}
+  <script src="{% static 'js/professor.js' %}"></script>
+  <script src="{% static 'js/workspace.js' %}?v=aura-interface-3"></script>
+{% endblock %}

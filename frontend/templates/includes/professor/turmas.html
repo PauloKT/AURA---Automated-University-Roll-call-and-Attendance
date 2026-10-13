@@ -1,0 +1,16 @@
+<section data-panel="turmas" hidden>
+  <header class="page-heading">
+    <div>
+      <h1>Turmas</h1>
+      <p>Alunos, encontros e frequência em um só lugar.</p>
+    </div>
+    <button class="button" data-new="turma">{% include 'includes/icon.html' with name='plus' %}Criar turma</button>
+  </header>
+  <div class="filters">
+    <div class="field">
+      <label for="group-search">Buscar turma</label>
+      <input id="group-search" type="search" placeholder="Turma ou matéria" name="group-search" autocomplete="off">
+    </div>
+  </div>
+  <div id="group-list" class="cards-grid"></div>
+</section>

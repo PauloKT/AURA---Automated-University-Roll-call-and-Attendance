@@ -1,0 +1,44 @@
+<section data-panel="inicio">
+  <header class="page-heading dashboard-heading">
+    <div>
+      <h1>Cada aula conta.</h1>
+      <p>Suas turmas e sua frequência, sempre por perto.</p>
+    </div>
+    <a class="button" href="#entrar">{% include 'includes/icon.html' with name='join' %}Entrar em uma turma</a>
+  </header>
+  <div id="student-stats" class="stats" aria-label="Resumo do semestre"></div>
+  <div class="split-layout">
+    <div>
+      <section class="panel calls-panel" aria-labelledby="calls-title">
+        <h2 id="calls-title">Chamadas disponíveis</h2>
+        <p id="calls-status" role="status">Consultando chamadas…</p>
+        <div id="calls-list"></div>
+        <div class="notice location-notice">
+          {% include 'includes/geo-signal.html' %}
+          <div>
+            <strong>Presença no campus</strong>
+            <p>Na sala, leia o QR Code do professor e permita a localização para confirmar sua presença.</p>
+          </div>
+        </div>
+      </section>
+      <div class="panel">
+        <header class="panel-header">
+          <h2>Meu acompanhamento</h2>
+          <a href="#frequencia">Ver frequência</a>
+        </header>
+        <div id="student-overview"></div>
+      </div>
+    </div>
+    <aside class="dashboard-aside">
+      <div class="feature-panel">
+        <h2>Chegou em uma turma nova?</h2>
+        <p>Peça ao professor o código de 8 caracteres e entre para acompanhar as aulas.</p>
+        <a class="button light" href="#entrar">Digitar código da turma</a>
+      </div>
+      <div class="panel">
+        <h2>Últimos registros</h2>
+        <div id="student-activity"></div>
+      </div>
+    </aside>
+  </div>
+</section>

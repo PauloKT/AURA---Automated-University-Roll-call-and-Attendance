@@ -1,0 +1,17 @@
+<section data-panel="entrar" hidden>
+  <header class="page-heading">
+    <div>
+      <h1>Encontre sua turma.</h1>
+      <p>Use o código que o professor mostrou na sala.</p>
+    </div>
+  </header>
+  <div class="panel narrow">
+    <form id="join-form">
+      <label for="invite-code">Código da turma *</label>
+      <input name="codigo_acesso" id="invite-code" class="code-display" required autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="AB2CD3EF">
+      <small>O código de entrada na turma é diferente do QR Code de presença.</small>
+      <button id="join-btn" type="submit">Entrar na turma</button>
+    </form>
+    <p id="join-message" role="status"></p>
+  </div>
+</section>

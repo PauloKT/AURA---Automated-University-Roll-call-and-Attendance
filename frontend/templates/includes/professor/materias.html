@@ -1,0 +1,16 @@
+<section data-panel="materias" hidden>
+  <header class="page-heading">
+    <div>
+      <h1>Matérias</h1>
+      <p>A base para organizar suas turmas e aulas.</p>
+    </div>
+    <button class="button" data-new="materia">{% include 'includes/icon.html' with name='plus' %}Criar matéria</button>
+  </header>
+  <div class="filters">
+    <div class="field">
+      <label for="subject-search">Buscar matéria</label>
+      <input id="subject-search" type="search" placeholder="Nome ou código" name="subject-search" autocomplete="off">
+    </div>
+  </div>
+  <div id="subject-list" class="cards-grid"></div>
+</section>

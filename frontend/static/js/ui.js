@@ -1,6 +1,6 @@
 window.UI = (() => {
   const escape = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
-  const icon = name => `<svg class="icon" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="${escape(document.body.dataset.iconsUrl || '/static/icons.svg?v=aura-icons-1')}#${escape(name)}"></use></svg>`;
+  const icon = name => `<svg class="icon" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="${escape(document.body.dataset.iconsUrl || '/static/images/icons.svg?v=aura-icons-1')}#${escape(name)}"></use></svg>`;
   function notify(message, kind = 'info') {
     const region = document.getElementById('toast-region');
     if (!region) return;

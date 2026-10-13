@@ -1,0 +1,47 @@
+<section data-panel="inicio">
+  <header class="page-heading dashboard-heading">
+    <div>
+      <h1>Um olhar sobre suas aulas.</h1>
+      <p>Organize os encontros. Acompanhe quem está aprendendo com você.</p>
+    </div>
+    <a class="button" href="#chamada">Iniciar chamada</a>
+  </header>
+  <div id="dashboard-stats" class="stats" aria-label="Resumo do professor"></div>
+  <div class="split-layout">
+    <div>
+      <div class="panel">
+        <header class="panel-header">
+          <h2>Agenda de aulas</h2>
+          <button class="text-button" data-new="aula">Criar aula</button>
+        </header>
+        <div id="dashboard-lessons">Carregando aulas…</div>
+      </div>
+      <div class="panel">
+        <header class="panel-header">
+          <h2>Suas turmas</h2>
+          <a href="#turmas">Ver todas</a>
+        </header>
+        <div id="dashboard-groups"></div>
+      </div>
+    </div>
+    <aside class="dashboard-aside">
+      <div class="feature-panel">
+        <h2>A chamada, no ritmo da sua aula.</h2>
+        <p>QR Code e localização do campus conectam seus alunos à chamada.</p>
+        <a class="button light" href="#chamada">Abrir chamada ao vivo</a>
+      </div>
+      <div class="panel">
+        <h2>Acesso rápido</h2>
+        <div class="actions">
+          <button class="button secondary small" data-new="materia">Criar matéria</button>
+          <button class="button secondary small" data-new="turma">Criar turma</button>
+          <a class="button secondary small" href="#relatorios">Ver relatórios</a>
+        </div>
+      </div>
+      <div class="panel">
+        <h2>Últimos registros</h2>
+        <div id="dashboard-activity"></div>
+      </div>
+    </aside>
+  </div>
+</section>
